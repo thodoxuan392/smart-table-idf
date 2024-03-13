@@ -1,0 +1,6 @@
+[submodule "components/lib/modbus"]
+	path = components/lib/modbus
+	url = git@github.com:thodoxuan392/modbus_protocol.git
+[submodule "components/lib/utils"]
+	path = components/lib/utils
+	url = git@github.com:thodoxuan392/utils.git

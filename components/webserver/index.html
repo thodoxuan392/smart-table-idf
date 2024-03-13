@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điều Khiển Ổ Cắm Thông Minh</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 20px;
+        }
+
+        .button-container {
+            margin-bottom: 20px;
+        }
+
+        .button {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 24px;
+            line-height: 100px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .button.on {
+            background-color: #4caf50; /* green */
+        }
+
+        .button.off {
+            background-color: #f44336; /* red */
+        }
+
+        .status {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .sensor-item {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Điều Khiển Ổ Cắm Thông Minh</h1>
+    </header>
+
+    <nav>
+        <a href="#"><i class="fas fa-home"></i> Trang Chủ</a>
+        <a href="#"><i class="fas fa-cogs"></i> Cài Đặt</a>
+        <a href="#"><i class="fas fa-info-circle"></i> Giới Thiệu</a>
+    </nav>
+
+    <div class="container">
+        <div class="button-container">
+            <div class="button" id="toggleButton"><i class="fas fa-power-off"></i></div>
+        </div>
+        <div class="status" id="status">Trạng Thái: Tắt</div>
+        
+        <div class="sensor-item" id="activePower"><i class="fas fa-bolt"></i> Công Suất Hoạt Động: 0W</div>
+        <div class="sensor-item" id="apparentPower"><i class="fas fa-bolt"></i> Công Suất Tương Phản: 0VA</div>
+        <div class="sensor-item" id="powerFactor"><i class="fas fa-angle-double-right"></i> Hệ Số Công Suất: 0</div>
+        <div class="sensor-item" id="kwh"><i class="fas fa-leaf"></i> KW/Giờ: 0</div>
+    </div>
+
+    <footer>
+        &copy; 2024 Giải Pháp Ổ Cắm Thông Minh
+    </footer>
+
+    <script>
+        const button = document.getElementById('toggleButton');
+        const statusText = document.getElementById('status');
+        let isOn = false;
+
+        function updateStatus() {
+            fetch('status', {
+                method: "GET"
+            }).then(async function(response) {
+                if (!response.ok) {
+                    alert("Get Status failed!");
+                    return;
+                }
+                const data = await response.json();
+                console.log(JSON.stringify(data));
+                isOn = data.relay;
+                statusText.textContent = `Status: ${isOn ? 'On' : 'Off'}`;
+            })
+            .catch(function(error) {
+                console.error("Get Status error:", error);
+            });
+        }
+
+        button.addEventListener('click', function() {
+            button.classList.toggle('on', isOn);
+            button.classList.toggle('off', !isOn);
+            fetch('command', {
+                method: "POST",
+                body: JSON.stringify({
+                    relay: !isOn
+                })
+            }).then(function(response) {
+                if (!response.ok) {
+                    alert("Send Command failed!");
+                    return;
+                }
+                updateStatus();
+            })
+            .catch(function(error) {
+                console.error("Send Command error:", error);
+            });
+        });
+
+        // Initial status update
+        updateStatus();
+    </script>
+</body>
+</html>
