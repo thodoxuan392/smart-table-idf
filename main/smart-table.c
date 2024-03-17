@@ -7,6 +7,7 @@
 #include "wifi.h"
 // Hal
 #include "relay.h"
+#include "unit_acmeasure.h"
 
 void app_main(void) {
   esp_err_t ret = nvs_flash_init();
@@ -17,6 +18,7 @@ void app_main(void) {
   }
 
   RELAY_init();
+  UNIT_ACMEASURE_init();
   // App init
   WIFI_init();
   WEBSERVER_init();

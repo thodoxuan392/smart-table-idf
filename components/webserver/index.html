@@ -131,6 +131,11 @@
     <script>
         const button = document.getElementById('toggleButton');
         const statusText = document.getElementById('status');
+        const activePower = document.getElementById('activePower');
+        const apparentPower = document.getElementById('apparentPower');
+        const powerFactor = document.getElementById('powerFactor');
+        const kwh = document.getElementById('kwh');
+
         let isOn = false;
 
         function updateStatus() {
@@ -145,6 +150,10 @@
                 console.log(JSON.stringify(data));
                 isOn = data.relay;
                 statusText.textContent = `Status: ${isOn ? 'On' : 'Off'}`;
+                activePower.textContent = `Công Suất Hoạt Động: ${data.activePower} W`;
+                apparentPower.textContent = `Công Suất Tương Phản: ${data.apparentPower} W`;
+                powerFactor.textContent = `Hệ Số Công Suất: ${data.powerFactor} %`;
+                kwh.textContent = `KW/Giờ: ${data.kwh} kWH`;
             })
             .catch(function(error) {
                 console.error("Get Status error:", error);
@@ -171,8 +180,10 @@
             });
         });
 
-        // Initial status update
-        updateStatus();
+        setInterval(() => {
+            updateStatus();
+        },1000);
+
     </script>
 </body>
 </html>

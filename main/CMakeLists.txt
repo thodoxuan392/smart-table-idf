@@ -5,4 +5,5 @@ idf_component_register(SRCS "smart-table.c"
         commandhandler
         webserver
         wifi
+        unit_acmeasure
 )

@@ -12,6 +12,7 @@
 
 #include "commandhandler.h"
 #include "relay.h"
+#include "unit_acmeasure.h"
 
 #define UNAUTHORIZED_ERROR "Unauthorized error"
 #define OUT_OF_MEMORY_ERROR "Out of memory"
@@ -172,12 +173,22 @@ static esp_err_t WEBSERVER_get_status_handler(httpd_req_t *req) {
                         INTERNAL_SERVER_ERROR);
     return ESP_FAIL;
   }
+  ESP_LOGI(TAG, "Getting status ...");
 
   httpd_resp_set_type(req, "application/json");
   httpd_resp_set_hdr(req, "Connection", "keep-alive");
 
-  size_t bufSize =
-      snprintf(buf, CONFIG_BODY_MAX_LENGTH, "{\"relay\": %d}", RELAY_get());
+  size_t bufSize = snprintf(buf, CONFIG_BODY_MAX_LENGTH, "{\
+          \"relay\": %d, \
+          \"activePower\": %d, \
+          \"apparentPower\": %d, \
+          \"powerFactor\": %d, \
+          \"kwh\": %f \
+        }",
+                            RELAY_get(), UNIT_ACMEASURE_getPowerWrapped(),
+                            UNIT_ACMEASURE_getApparentPowerWrapped(),
+                            UNIT_ACMEASURE_getPowerFactorWrapped(),
+                            UNIT_ACMEASURE_getKWHWrapped());
   /* Send a simple response */
   httpd_resp_send(req, buf, bufSize);
   free(buf);
