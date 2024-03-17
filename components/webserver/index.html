@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Điều Khiển Ổ Cắm Thông Minh</title>
+    <title>Ổ Cắm Thông Minh</title>
 
     <style>
         body {
@@ -52,45 +52,79 @@
             margin-bottom: 20px;
         }
 
-        .button {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: #007bff;
-            color: #fff;
-            font-size: 24px;
-            line-height: 100px;
-            text-align: center;
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 240px;
+            height: 120px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
             cursor: pointer;
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
-            transition: background-color 0.3s, box-shadow 0.3s;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 60px;
         }
 
-        .button:hover {
-            background-color: #0056b3;
-            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.5);
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 95px;
+            width: 95px;
+            left: 14px;
+            bottom: 12px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
         }
 
-        .button.on {
-            background-color: #4caf50; /* green */
+        input:checked + .slider {
+            background-color: #4caf50;
         }
 
-        .button.off {
-            background-color: #f44336; /* red */
+        input:focus + .slider {
+            box-shadow: 0 0 1px #4caf50;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(120px);
         }
 
         .status {
-            font-size: 18px;
+            font-size: 28px;
             color: #333;
             margin-bottom: 10px;
         }
 
         .sensor-item {
-            font-size: 16px;
+            font-size: 24px;
             color: #666;
             margin-bottom: 5px;
         }
+        .fas {
+            margin: 5px;     
+            text-align: center;
+        }
+        .nav_t{
+            font-size: 24px;
 
+        }
+
+        .main_t{
+            font-size: 40px;
+
+        }
         footer {
             background-color: #333;
             color: #fff;
@@ -103,25 +137,26 @@
 </head>
 <body>
     <header>
-        <h1>Điều Khiển Ổ Cắm Thông Minh</h1>
+        <h1 class="main_t">Ổ Cắm Thông Minh</h1>
     </header>
 
     <nav>
-        <a href="#"><i class="fas fa-home"></i> Trang Chủ</a>
-        <a href="#"><i class="fas fa-cogs"></i> Cài Đặt</a>
-        <a href="#"><i class="fas fa-info-circle"></i> Giới Thiệu</a>
+        <a href="#" class="nav_t"><i class="fas fa-home"></i> Trang Chủ</a>
+        <a href="#" class="nav_t"><i class="fas fa-cogs"></i> Cài Đặt</a>
+        <a href="#" class="nav_t"><i class="fas fa-info-circle"></i> Giới Thiệu</a>
     </nav>
 
     <div class="container">
         <div class="button-container">
-            <div class="button" id="toggleButton"><i class="fas fa-power-off"></i></div>
+            <label class="switch">
+                <input type="checkbox" id="toggleButton">
+                <span class="slider"></span>
+            </label>
         </div>
-        <div class="status" id="status">Trạng Thái: Tắt</div>
+        <div class="status" id="status">Đang: Tắt</div>
         
-        <div class="sensor-item" id="activePower"><i class="fas fa-bolt"></i> Công Suất Hoạt Động: 0W</div>
-        <div class="sensor-item" id="apparentPower"><i class="fas fa-bolt"></i> Công Suất Tương Phản: 0VA</div>
-        <div class="sensor-item" id="powerFactor"><i class="fas fa-angle-double-right"></i> Hệ Số Công Suất: 0</div>
-        <div class="sensor-item" id="kwh"><i class="fas fa-leaf"></i> KW/Giờ: 0</div>
+        <div class="sensor-item" id="activePower"><i class="fas fa-bolt"></i> Công Suất: 0W</div>
+        <div class="sensor-item" id="kwh"><i class="fas fa-leaf"></i> KWH: 0</div>
     </div>
 
     <footer>
@@ -149,11 +184,10 @@
                 const data = await response.json();
                 console.log(JSON.stringify(data));
                 isOn = data.relay;
-                statusText.textContent = `Status: ${isOn ? 'On' : 'Off'}`;
-                activePower.textContent = `Công Suất Hoạt Động: ${data.activePower} W`;
-                apparentPower.textContent = `Công Suất Tương Phản: ${data.apparentPower} W`;
-                powerFactor.textContent = `Hệ Số Công Suất: ${data.powerFactor} %`;
-                kwh.textContent = `KW/Giờ: ${data.kwh} kWH`;
+                button.checked = isOn;
+                statusText.textContent = `Đang: ${isOn ? 'Bật' : 'Tắt'}`;
+                activePower.textContent = `Công Suất: ${data.activePower} W`;
+                kwh.textContent = `KWH: ${data.kwh} kWH`;
             })
             .catch(function(error) {
                 console.error("Get Status error:", error);
